@@ -9,7 +9,7 @@ class ResultSerializer(serializers.Serializer):
   scan_time = serializers.DateTimeField(format=SCAN_TIME_DATETIME_FORMAT, input_formats=[SCAN_TIME_DATETIME_FORMAT])
   hostname = serializers.CharField(max_length=255)
   emocheck_version = serializers.CharField(max_length=255)
-  is_infected = serializers.ChoiceField(choices=[(True, 'yes'),(False, 'no')])
+  is_infected = serializers.CharField(source="get_is_infected_display")
 
   def create(self, validated_data):
 

@@ -7,10 +7,10 @@ class Result(models.Model):
   class Meta:
     ordering = ['created_at']
 
-  scan_time = models.DateTimeField(auto_now=())
+  scan_time = models.DateTimeField()
   hostname = models.CharField(max_length=255)
   emocheck_version = models.CharField(max_length=255)
-  is_infected = models.BooleanField(default=False)
+  is_infected = models.BooleanField(choices=[(True, 'yes'),(False, 'no')], default=False)
   created_at = models.DateTimeField(auto_now_add=True)
 
 
