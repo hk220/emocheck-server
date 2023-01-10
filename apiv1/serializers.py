@@ -3,33 +3,38 @@ from rest_framework import serializers
 from emocheck.models import Result, EmotetProcess
 
 
+TRUE_FALSE_CHOICES = (
+    (True, 'yes'),
+    (False, 'no')
+)
+
 SCAN_TIME_DATETIME_FORMAT="%Y-%m-%d %H:%M:%S"
 
-class ResultSerializer(serializers.Serializer):
-  scan_time = serializers.DateTimeField(format=SCAN_TIME_DATETIME_FORMAT, input_formats=[SCAN_TIME_DATETIME_FORMAT])
-  hostname = serializers.CharField(max_length=255)
-  emocheck_version = serializers.CharField(max_length=255)
-  is_infected = serializers.CharField(source="get_is_infected_display")
 
-  def create(self, validated_data):
+# https://stackoverflow.com/questions/34534239/return-display-name-in-choicefield
+class MyChoiceField(serializers.ChoiceField):
 
-    return Result.objects.create(**validated_data)
+  def to_representation(self, value):
+    if value not in self.choices.keys():
+      self.fail('invalid_choice', input=value)
+    else:
+      return self.choices[value]
 
-  def update(self, instance, validated_data):
-    instance.scan_time = validated_data.get('scan_time', instance.scan_time)
-    instance.hostname = validated_data.get('hostname', instance.hostname)
-    instance.emocheck_version = validated_data.get('emocheck_version', instance.emocheck_version)
-    instance.is_infected = validated_data.get('is_infected', instance.is_infected)
-    instance.save()
-    return instance
+  def to_internal_value(self, data):
+    for key, value in self.choices.items():
+      if value == data:
+        return key
+    self.fail('invalid_choice', input=data)
 
 
 class ResultModelSerializer(serializers.ModelSerializer):
+  scan_time = serializers.DateTimeField(format=SCAN_TIME_DATETIME_FORMAT, input_formats=[SCAN_TIME_DATETIME_FORMAT])
+  is_infected = MyChoiceField(choices=TRUE_FALSE_CHOICES)
+
   class Meta:
     model = Result
     fields = ['scan_time', 'hostname', 'emocheck_version', 'is_infected']
 
-  
 
 class EmotetProcessModelSerializer(serializers.ModelSerializer):
   class Meta:
