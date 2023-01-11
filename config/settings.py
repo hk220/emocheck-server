@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'rest_framework',
     # application
     'apiv1',
-    'viewer',
     'emocheck',
 ]
 
