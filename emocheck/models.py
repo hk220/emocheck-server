@@ -20,7 +20,7 @@ class EmotetProcess(models.Model):
   class Meta:
     ordering = ['created_at']
 
-  result = models.ForeignKey(Result, on_delete=models.CASCADE)
+  result = models.ForeignKey(Result, related_name="emotet_processes", on_delete=models.CASCADE)
   process_name = models.CharField(max_length=255)
   process_id = models.IntegerField()
   image_path = models.CharField(max_length=255)

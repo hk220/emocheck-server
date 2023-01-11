@@ -27,16 +27,35 @@ class MyChoiceField(serializers.ChoiceField):
     self.fail('invalid_choice', input=data)
 
 
-class ResultModelSerializer(serializers.ModelSerializer):
-  scan_time = serializers.DateTimeField(format=SCAN_TIME_DATETIME_FORMAT, input_formats=[SCAN_TIME_DATETIME_FORMAT])
-  is_infected = MyChoiceField(choices=TRUE_FALSE_CHOICES)
+class MyIntegerField(serializers.IntegerField):
 
-  class Meta:
-    model = Result
-    fields = ['scan_time', 'hostname', 'emocheck_version', 'is_infected']
+  def to_representation(self, value):
+    return str(super().to_representation(value))
 
 
 class EmotetProcessModelSerializer(serializers.ModelSerializer):
+  process_id = MyIntegerField()
+  
   class Meta:
     model = EmotetProcess
     fields = ['process_name', 'process_id', 'image_path', 'registry_key']
+
+
+class ResultModelSerializer(serializers.ModelSerializer):
+  scan_time = serializers.DateTimeField(format=SCAN_TIME_DATETIME_FORMAT, input_formats=[SCAN_TIME_DATETIME_FORMAT])
+  is_infected = MyChoiceField(choices=TRUE_FALSE_CHOICES)
+  emotet_processes = EmotetProcessModelSerializer(many=True)
+
+  class Meta:
+    model = Result
+    fields = ['scan_time', 'hostname', 'emocheck_version', 'is_infected', 'emotet_processes']
+
+  def create(self, validated_data):
+    if 'emotet_processes' in validated_data.keys():
+      emotet_processes_data = validated_data.pop('emotet_processes')
+      result = Result.objects.create(**validated_data)
+      for emotet_process_data in emotet_processes_data:
+        EmotetProcess.objects.create(result=result, **emotet_process_data)
+      return result
+    else:
+      return Result.objects.create(**validated_data)
