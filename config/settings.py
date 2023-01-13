@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # application
     'apiv1',
     'emocheck',
+    'viewer',
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,52 @@
+{% extends 'viewer/base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row align-items-center">
+    <div class="col">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>scan time</th>
+            <th>hostname</th>
+            <th>emocheck_version</th>
+            <th>is_infected</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ result_detail.scan_time }}</td>
+            <td>{{ result_detail.hostname }}</td>
+            <td>{{ result_detail.emocheck_version }}</td>
+            <td>{{ result_detail.is_infected }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row align-items-center">
+    <div class="col">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>process_name</th>
+            <th>process_id</th>
+            <th>image_path</th>
+            <th>registry_key</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for emotet_process in result_detail.emotet_processes.all %}
+          <tr>
+            <td>{{ emotet_process.process_name }}</td>
+            <td>{{ emotet_process.process_id }}</td>
+            <td>{{ emotet_process.image_path }}</td>
+            <td>{{ emotet_process.registry_key }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock content %}

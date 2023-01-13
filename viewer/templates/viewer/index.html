@@ -1,0 +1,32 @@
+{% extends 'viewer/base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row align-items-center">
+    <div class="col">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>scan time</th>
+            <th>hostname</th>
+            <th>emocheck_version</th>
+            <th>is_infected</th>
+            <th>Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for result in result_list %}
+          <tr>
+            <td>{{ result.scan_time }}</td>
+            <td>{{ result.hostname }}</td>
+            <td>{{ result.emocheck_version }}</td>
+            <td>{{ result.is_infected }}</td>
+            <td><a href="{% url 'detail' result.id %}">Detail</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock content %}
