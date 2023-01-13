@@ -44,7 +44,7 @@ class EmotetProcessModelSerializer(serializers.ModelSerializer):
 class ResultModelSerializer(serializers.ModelSerializer):
   scan_time = serializers.DateTimeField(format=SCAN_TIME_DATETIME_FORMAT, input_formats=[SCAN_TIME_DATETIME_FORMAT])
   is_infected = MyChoiceField(choices=TRUE_FALSE_CHOICES)
-  emotet_processes = EmotetProcessModelSerializer(many=True)
+  emotet_processes = EmotetProcessModelSerializer(many=True, required=False)
 
   class Meta:
     model = Result
@@ -59,3 +59,9 @@ class ResultModelSerializer(serializers.ModelSerializer):
       return result
     else:
       return Result.objects.create(**validated_data)
+
+  def to_representation(self, instance):
+    ret = super().to_representation(instance)
+    if ret['emotet_processes'] == []:
+      ret.pop('emotet_processes')
+    return ret
