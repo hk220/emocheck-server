@@ -7,7 +7,7 @@ from emocheck.models import Result
 class IndexView(generic.ListView):
   template_name = 'viewer/index.html'
   model = Result
-  context_object_name = 'result_list'
+  paginate_by = 20
 
 
 class DetailView(generic.DetailView):
